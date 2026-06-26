@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build And Publish macOS App
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Swift version
+        run: swift --version
+
+      - name: Test
+        run: swift test
+
+      - name: Build release zip
+        env:
+          DEVPORTAL_VERSION: ${{ github.ref_name }}
+        run: |
+          VERSION="${DEVPORTAL_VERSION#v}"
+          DEVPORTAL_VERSION="$VERSION" ./script/build_and_run.sh --zip
+
+      - name: Create release notes
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { flag=1; next }
+            /^## / && flag { flag=0 }
+            flag { print }
+          ' CHANGELOG.md | sed -e '/./,$!d' > notes.md
+          if [ ! -s notes.md ]; then
+            awk '
+              $0 == "## [Unreleased]" { flag=1; next }
+              /^## / && flag { flag=0 }
+              flag { print }
+            ' CHANGELOG.md | sed -e '/./,$!d' > notes.md
+          fi
+          if [ ! -s notes.md ]; then
+            echo "DevPortal ${GITHUB_REF_NAME}" > notes.md
+          fi
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            dist/DevPortal.app.zip \
+            --title "DevPortal $GITHUB_REF_NAME" \
+            --notes-file notes.md

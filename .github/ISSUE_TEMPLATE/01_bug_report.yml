@@ -1,0 +1,43 @@
+name: Bug Report
+description: Report something that is broken in DevPortal.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a DevPortal bug.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the behavior you saw and what you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Start ...
+        2. Open ...
+        3. Click ...
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version
+      placeholder: "Example: macOS 15.5"
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: DevPortal version
+      placeholder: "Example: 0.1.0 or commit SHA"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs or screenshots
+      render: text
