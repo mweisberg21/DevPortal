@@ -24,6 +24,7 @@ or stop them without hunting through terminal tabs.
 - Supports ignore and always-show visibility rules.
 - Sends optional notifications for new dev servers and long-running servers.
 - Supports launch-at-login registration through macOS ServiceManagement.
+- Supports in-app update checks through Sparkle.
 
 ## Install
 
@@ -129,11 +130,23 @@ Docker actions include:
 - stop a container
 - stop a Compose project when compose labels are available
 
+## Updates
+
+DevPortal uses [Sparkle](https://sparkle-project.org/) for app updates. The menu
+includes **Check for Updates...**, and release builds read the appcast from:
+
+```text
+https://github.com/mweisberg21/DevPortal/releases/latest/download/appcast.xml
+```
+
+Sparkle asks before enabling automatic update checks.
+
 ## Privacy And Safety
 
 DevPortal is local-first. It does not include analytics, telemetry, account
 login, or cloud sync. It inspects local process, port, and Docker state using
-macOS command-line tools and stores preferences in `UserDefaults`.
+macOS command-line tools and stores preferences in `UserDefaults`. Sparkle may
+contact GitHub to check for app updates.
 
 Read [docs/privacy.md](docs/privacy.md) for the full local data and command
 surface.

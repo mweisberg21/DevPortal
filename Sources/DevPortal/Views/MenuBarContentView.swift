@@ -1,8 +1,10 @@
+import Sparkle
 import SwiftUI
 
 struct MenuBarContentView: View {
   @EnvironmentObject private var store: ServerStore
   @Environment(\.openWindow) private var openWindow
+  let updater: SPUUpdater
 
   var body: some View {
     Button("Open Inspector") {
@@ -16,6 +18,10 @@ struct MenuBarContentView: View {
     .keyboardShortcut("r")
 
     Text(DisplayFormat.clipped(store.statusMessage, length: 30))
+
+    Divider()
+
+    CheckForUpdatesView(updater: updater)
 
     Divider()
 

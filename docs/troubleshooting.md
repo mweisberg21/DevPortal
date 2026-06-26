@@ -35,3 +35,9 @@ Terminate only when you are sure the process should be killed.
 Launch-at-login uses `SMAppService.mainApp`, which requires a signed app bundle.
 The local build script ad-hoc signs the app. For public releases, Developer ID
 signing and notarization are planned.
+
+## Update Checks Fail
+
+DevPortal uses Sparkle and reads its appcast from GitHub Releases. If update
+checks fail, confirm the latest release includes an `appcast.xml` asset and that
+Console.app does not show Sparkle signature or feed URL errors.

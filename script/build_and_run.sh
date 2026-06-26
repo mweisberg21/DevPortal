@@ -6,6 +6,8 @@ APP_NAME="DevPortal"
 BUNDLE_ID="com.mswdigital.DevPortal"
 MIN_SYSTEM_VERSION="14.0"
 APP_VERSION="${DEVPORTAL_VERSION:-0.1.0}"
+SPARKLE_FEED_URL="${DEVPORTAL_SPARKLE_FEED_URL:-https://github.com/mweisberg21/DevPortal/releases/latest/download/appcast.xml}"
+SPARKLE_PUBLIC_KEY="LFQgb2IVf7iqRg10DAk4t3AltuvU5hTazf1RtLufcwA="
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DIST_DIR="$ROOT_DIR/dist"
@@ -13,6 +15,7 @@ APP_BUNDLE="$DIST_DIR/$APP_NAME.app"
 APP_CONTENTS="$APP_BUNDLE/Contents"
 APP_MACOS="$APP_CONTENTS/MacOS"
 APP_RESOURCES="$APP_CONTENTS/Resources"
+APP_FRAMEWORKS="$APP_CONTENTS/Frameworks"
 APP_BINARY="$APP_MACOS/$APP_NAME"
 INFO_PLIST="$APP_CONTENTS/Info.plist"
 ICON_FILE="$ROOT_DIR/Resources/AppIcon.icns"
@@ -31,12 +34,20 @@ if [[ ! -f "$ICON_FILE" || "$ICON_SCRIPT" -nt "$ICON_FILE" ]]; then
 fi
 
 swift build
-BUILD_BINARY="$(swift build --show-bin-path)/$APP_NAME"
+BUILD_DIR="$(swift build --show-bin-path)"
+BUILD_BINARY="$BUILD_DIR/$APP_NAME"
+SPARKLE_FRAMEWORK="$BUILD_DIR/Sparkle.framework"
+
+if [[ ! -d "$SPARKLE_FRAMEWORK" ]]; then
+  echo "Sparkle.framework was not found in $BUILD_DIR" >&2
+  exit 1
+fi
 
 rm -rf "$APP_BUNDLE"
-mkdir -p "$APP_MACOS" "$APP_RESOURCES"
+mkdir -p "$APP_MACOS" "$APP_RESOURCES" "$APP_FRAMEWORKS"
 cp "$BUILD_BINARY" "$APP_BINARY"
 cp "$ICON_FILE" "$APP_RESOURCES/AppIcon.icns"
+/usr/bin/ditto "$SPARKLE_FRAMEWORK" "$APP_FRAMEWORKS/Sparkle.framework"
 chmod +x "$APP_BINARY"
 
 cat >"$INFO_PLIST" <<PLIST
@@ -64,10 +75,15 @@ cat >"$INFO_PLIST" <<PLIST
   <true/>
   <key>NSPrincipalClass</key>
   <string>NSApplication</string>
+  <key>SUFeedURL</key>
+  <string>$SPARKLE_FEED_URL</string>
+  <key>SUPublicEDKey</key>
+  <string>$SPARKLE_PUBLIC_KEY</string>
 </dict>
 </plist>
 PLIST
 
+/usr/bin/codesign --force --sign - "$APP_FRAMEWORKS/Sparkle.framework" >/dev/null
 /usr/bin/codesign --force --sign - "$APP_BUNDLE" >/dev/null
 
 open_app() {

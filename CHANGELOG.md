@@ -12,6 +12,17 @@ This project loosely follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Fixed
 
+## [0.1.1]
+
+### Added
+
+- Sparkle update support with a menu-bar **Check for Updates...** action.
+- Release automation now publishes a signed Sparkle `appcast.xml` asset.
+
+### Changed
+
+### Fixed
+
 ## [0.1.0]
 
 ### Added

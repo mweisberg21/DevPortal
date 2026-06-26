@@ -1,4 +1,5 @@
 import AppKit
+import Sparkle
 import SwiftUI
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -11,9 +12,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 struct DevPortalApp: App {
   @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
   @StateObject private var store = ServerStore()
+  private let updaterController: SPUStandardUpdaterController
 
   init() {
     Diagnostics.runIfRequested()
+    updaterController = SPUStandardUpdaterController(
+      startingUpdater: true,
+      updaterDelegate: nil,
+      userDriverDelegate: nil
+    )
   }
 
   var body: some Scene {
@@ -28,7 +35,7 @@ struct DevPortalApp: App {
     }
 
     MenuBarExtra {
-      MenuBarContentView()
+      MenuBarContentView(updater: updaterController.updater)
         .environmentObject(store)
         .onAppear {
           store.refreshIfNeeded()

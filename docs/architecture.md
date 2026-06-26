@@ -25,6 +25,9 @@ LsofParser    DockerPortParser
 applies visibility rules, tracks first-seen/runtime data, records history, and
 posts notifications.
 
+`DevPortalApp` owns the Sparkle `SPUStandardUpdaterController` and passes the
+updater into the menu-bar view for manual update checks.
+
 ## Source Layout
 
 - `Sources/DevPortal/App`: app entry point and command-line diagnostic mode
@@ -64,3 +67,9 @@ Destructive actions should stay explicit, visible, and reversible where possible
 Preferences, visibility rules, first-seen tracking, and history are stored in
 `UserDefaults` as JSON-encoded values. DevPortal does not use a database, account,
 or cloud service.
+
+## Updates
+
+Sparkle is linked through SwiftPM and embedded into the manually staged app
+bundle under `Contents/Frameworks/Sparkle.framework`. The app reads its update
+feed URL and public EdDSA key from `Info.plist`.

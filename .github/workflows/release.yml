@@ -48,11 +48,33 @@ jobs:
             echo "DevPortal ${GITHUB_REF_NAME}" > notes.md
           fi
 
+      - name: Generate Sparkle appcast
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: |
+          if [ -z "$SPARKLE_PRIVATE_KEY" ]; then
+            echo "SPARKLE_PRIVATE_KEY secret is required to generate the appcast." >&2
+            exit 1
+          fi
+
+          mkdir -p updates
+          cp dist/DevPortal.app.zip updates/DevPortal.app.zip
+          cp notes.md updates/DevPortal.app.md
+
+          echo "$SPARKLE_PRIVATE_KEY" | .build/artifacts/sparkle/Sparkle/bin/generate_appcast \
+            --ed-key-file - \
+            --download-url-prefix "https://github.com/mweisberg21/DevPortal/releases/download/${GITHUB_REF_NAME}/" \
+            --link "https://github.com/mweisberg21/DevPortal" \
+            --embed-release-notes \
+            -o updates/appcast.xml \
+            updates
+
       - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" \
             dist/DevPortal.app.zip \
+            updates/appcast.xml \
             --title "DevPortal $GITHUB_REF_NAME" \
             --notes-file notes.md

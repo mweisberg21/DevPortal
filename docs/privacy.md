@@ -9,7 +9,7 @@ It does not include:
 - crash reporting
 - account login
 - cloud sync
-- background network requests to DevPortal servers
+- background network requests to DevPortal servers or analytics services
 
 ## Local Data Inspected
 
@@ -50,6 +50,10 @@ DevPortal stores these values in macOS `UserDefaults`:
 
 Opening a detected server URL uses your default browser. DevPortal itself does
 not proxy, upload, sync, or transmit local scanner results.
+
+DevPortal uses Sparkle for app updates. Sparkle may contact GitHub to read the
+public appcast feed and download update archives. Sparkle asks before enabling
+automatic update checks.
 
 ## Stopping Processes
 
