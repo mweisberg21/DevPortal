@@ -8,6 +8,14 @@ This project loosely follows [Keep a Changelog](https://keepachangelog.com).
 
 ### Added
 
+### Changed
+
+### Fixed
+
+## [0.1.0]
+
+### Added
+
 - Initial macOS menu-bar app for finding local dev servers, Docker ports, and other local listeners.
 - Inspector window with search, runtime tracking, source hints, history, rules, notifications, and launch-at-login settings.
 - Docker actions for opening mapped ports, opening logs, stopping containers, and stopping Compose projects.
